@@ -114,7 +114,13 @@ export function AuthView({
 
     if (view === "CALLBACK") return <AuthCallback redirectTo={redirectTo} />
     if (view === "SIGN_OUT") return <SignOut redirectTo={redirectTo} />
-    if (view === "ACCEPT_INVITATION") return <AcceptInvitationCard />
+    if (view === "ACCEPT_INVITATION")
+        return (
+            <AcceptInvitationCard
+                className={className}
+                classNames={classNames}
+            />
+        )
 
     const description =
         !credentials && !magicLink && !emailOTP
