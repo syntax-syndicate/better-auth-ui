@@ -1,3 +1,4 @@
+import { passkeyClient } from "@better-auth/passkey/client"
 import {
     anonymousClient,
     apiKeyClient,
@@ -7,7 +8,6 @@ import {
     multiSessionClient,
     oneTapClient,
     organizationClient,
-    passkeyClient,
     twoFactorClient,
     usernameClient
 } from "better-auth/client/plugins"

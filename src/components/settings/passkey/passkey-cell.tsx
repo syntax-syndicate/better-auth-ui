@@ -1,5 +1,6 @@
 "use client"
 
+import type { Passkey } from "@better-auth/passkey"
 import { FingerprintIcon, Loader2 } from "lucide-react"
 import { useContext, useState } from "react"
 
@@ -15,7 +16,7 @@ export interface PasskeyCellProps {
     className?: string
     classNames?: SettingsCardClassNames
     localization?: Partial<AuthLocalization>
-    passkey: { id: string; createdAt: Date }
+    passkey: Passkey
 }
 
 export function PasskeyCell({

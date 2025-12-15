@@ -1,3 +1,4 @@
+import type { Passkey } from "@better-auth/passkey"
 import type { BetterFetchError } from "@better-fetch/fetch"
 import type { Account, User } from "better-auth"
 import type { Member } from "better-auth/plugins/organization"
@@ -24,7 +25,7 @@ export type AuthHooks = {
     ) => AuthHook<{ user: User }>
     useListDeviceSessions: () => AuthHook<AnyAuthClient["$Infer"]["Session"][]>
     useListSessions: () => AuthHook<AnyAuthSession["session"][]>
-    useListPasskeys: () => Partial<ReturnType<AuthClient["useListPasskeys"]>>
+    useListPasskeys: () => AuthHook<Passkey[]>
     useListApiKeys: () => AuthHook<ApiKey[]>
     useActiveOrganization: () => Partial<
         ReturnType<AuthClient["useActiveOrganization"]>
