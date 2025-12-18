@@ -92,7 +92,7 @@ export function TeamsCard({
                 classNames={classNames}
                 description={localization.TEAMS_DESCRIPTION}
                 disabled={!hasPermissionCreate?.success}
-                instructions="Add new team to your organization."
+                instructions={localization.CREATE_TEAM_INSTRUCTIONS}
                 isPending={isPending}
                 title={localization.TEAMS}
                 {...props}

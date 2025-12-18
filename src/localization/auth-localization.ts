@@ -747,6 +747,9 @@ export const authLocalization = {
     REMOVE_TEAM_CONFIRM:
         "Are you sure you want to remove this team from the organization?",
 
+    /** @default "Add new team to your organization." */
+    CREATE_TEAM_INSTRUCTIONS: "Add new team to your organization.",
+
     /** @default "Team Name" */
     TEAM_NAME: "Team Name",
 

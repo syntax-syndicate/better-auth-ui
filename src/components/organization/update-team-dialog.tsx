@@ -130,11 +130,13 @@ export function UpdateTeamDialog({
                     </div>
                 </Card>
                 <Field className="grid gap-2">
-                    <FieldLabel htmlFor="name">Name</FieldLabel>
+                    <FieldLabel htmlFor="name">
+                        {localization.TEAM_NAME}
+                    </FieldLabel>
                     <Input
                         id="name"
                         onChange={(e) => setName(e.target.value)}
-                        placeholder="Enter team's name"
+                        placeholder={localization.TEAM_NAME_PLACEHOLDER}
                         required
                         value={name}
                     />
