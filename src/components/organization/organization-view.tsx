@@ -217,7 +217,7 @@ export function OrganizationView({
                 </div>
             )}
 
-            {view === "TEAMS" && organization?.id && (
+            {view === "TEAMS" && organization?.id && teamsEnabled && (
                 <TeamsCard
                     classNames={classNames}
                     localization={localization}

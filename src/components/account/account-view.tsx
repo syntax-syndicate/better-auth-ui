@@ -38,6 +38,7 @@ export interface AccountViewProps {
     pathname?: string
     view?: AccountViewPath
     hideNav?: boolean
+    showTeams?: boolean
 }
 
 export function AccountView({
@@ -47,7 +48,8 @@ export function AccountView({
     path: pathProp,
     pathname,
     view: viewProp,
-    hideNav
+    hideNav,
+    showTeams
 }: AccountViewProps) {
     const {
         apiKey,
@@ -83,7 +85,7 @@ export function AccountView({
         { view: "SECURITY", label: localization.SECURITY }
     ]
 
-    if (teamsEnabled) {
+    if (teamsEnabled && showTeams) {
         navItems.push({
             view: "TEAMS",
             label: localization.TEAMS
@@ -205,7 +207,7 @@ export function AccountView({
                 />
             )}
 
-            {view === "TEAMS" && (
+            {view === "TEAMS" && teamsEnabled && showTeams && (
                 <UserTeamsCard
                     classNames={classNames}
                     localization={localization}
