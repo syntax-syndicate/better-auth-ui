@@ -753,8 +753,14 @@ export const authLocalization = {
     /** @default "Update Team" */
     UPDATE_TEAM: "Update Team",
 
+    /** @default "Update Teams" */
+    UPDATE_TEAMS: "Update Teams",
+
     /** @default "Update the name for this team" */
     UPDATE_TEAM_DESCRIPTION: "Update the name for this team",
+
+    /** @default "Update the member teams" */
+    UPDATE_TEAMS_DESCRIPTION: "Update the member teams",
 
     /** @default "Are you sure you want to remove this team from the organization?" */
     REMOVE_TEAM_CONFIRM:
