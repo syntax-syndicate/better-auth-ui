@@ -39,6 +39,7 @@ export function MemberCell({
     hideActions
 }: MemberCellProps) {
     const {
+        teams: teamOptions,
         organization: organizationOptions,
         hooks: {
             useListMembers,
@@ -48,6 +49,7 @@ export function MemberCell({
         },
         localization: contextLocalization
     } = useContext(AuthUIContext)
+    const { enabled: teamsEnabled } = teamOptions || {}
     const localization = { ...contextLocalization, ...localizationProp }
 
     const { data: sessionData } = useSession()
@@ -140,16 +142,20 @@ export function MemberCell({
                                             />
                                             {localization?.UPDATE_ROLE}
                                         </DropdownMenuItem>
-                                        <DropdownMenuItem
-                                            onClick={() =>
-                                                setUpdateTeamsDialogOpen(true)
-                                            }
-                                        >
-                                            <Users
-                                                className={classNames?.icon}
-                                            />
-                                            {localization?.UPDATE_TEAMS}
-                                        </DropdownMenuItem>
+                                        {teamsEnabled && (
+                                            <DropdownMenuItem
+                                                onClick={() =>
+                                                    setUpdateTeamsDialogOpen(
+                                                        true
+                                                    )
+                                                }
+                                            >
+                                                <Users
+                                                    className={classNames?.icon}
+                                                />
+                                                {localization?.UPDATE_TEAMS}
+                                            </DropdownMenuItem>
+                                        )}
                                     </>
                                 )}
 
@@ -196,13 +202,15 @@ export function MemberCell({
                 classNames={classNames}
                 localization={localization}
             />
-            <UpdateMemberTeamsDialog
-                open={updateTeamsDialogOpen}
-                onOpenChange={setUpdateTeamsDialogOpen}
-                member={member}
-                classNames={classNames}
-                localization={localization}
-            />
+            {teamsEnabled && (
+                <UpdateMemberTeamsDialog
+                    open={updateTeamsDialogOpen}
+                    onOpenChange={setUpdateTeamsDialogOpen}
+                    member={member}
+                    classNames={classNames}
+                    localization={localization}
+                />
+            )}
         </>
     )
 }

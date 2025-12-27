@@ -91,7 +91,7 @@ export function UpdateMemberTeamsDialog({
                         localization={localization}
                         hideActions
                     />
-                    <Card>
+                    <Card className="gap-2">
                         <CardHeader>
                             <CardTitle>{localization.TEAMS}</CardTitle>
                         </CardHeader>
