@@ -9,9 +9,11 @@ import type { Provider } from "../../../lib/social-providers"
 import { cn, getLocalizedError } from "../../../lib/utils"
 import type { AuthLocalization } from "../../../localization/auth-localization"
 import type { Refetch } from "../../../types/refetch"
+import { useIsMobile } from "../../../hooks/use-mobile"
 import { Button } from "../../ui/button"
 import { Card } from "../../ui/card"
 import { Skeleton } from "../../ui/skeleton"
+import { Tooltip, TooltipContent, TooltipTrigger } from "../../ui/tooltip"
 import type { SettingsCardClassNames } from "../shared/settings-card"
 
 export interface ProviderCellProps {
@@ -48,6 +50,7 @@ export function ProviderCell({
     localization = { ...contextLocalization, ...localization }
 
     const [isLoading, setIsLoading] = useState(false)
+    const isMobile = useIsMobile()
 
     const handleLink = async () => {
         setIsLoading(true)
@@ -108,23 +111,20 @@ export function ProviderCell({
     return (
         <Card
             className={cn(
-                "flex-row items-center gap-3 px-4 py-3",
+                "min-w-0 flex-row items-center gap-3 px-4 py-3",
                 className,
                 classNames?.cell
             )}
         >
-            {provider.icon && (
-                <provider.icon className={cn("size-4", classNames?.icon)} />
-            )}
-
-            <div className="flex-col">
-                <div className="text-sm">{provider.name}</div>
-
-                {account && <AccountInfo account={account} />}
-            </div>
+            <CardContentWithTooltip
+                account={account}
+                isMobile={isMobile}
+                provider={provider}
+                classNames={classNames}
+            />
 
             <Button
-                className={cn("relative ms-auto", classNames?.button)}
+                className={cn("relative ms-auto shrink-0", classNames?.button)}
                 disabled={isLoading}
                 size="sm"
                 type="button"
@@ -136,6 +136,74 @@ export function ProviderCell({
             </Button>
         </Card>
     )
+}
+
+function CardContentWithTooltip({
+    account,
+    isMobile,
+    provider,
+    classNames
+}: {
+    account?: Account | null
+    isMobile: boolean
+    provider: Provider
+    classNames?: SettingsCardClassNames
+}) {
+    const email = account ? <AccountInfo account={account} /> : null
+    const emailText = useAccountEmail(account)
+    const [tooltipOpen, setTooltipOpen] = useState(false)
+
+    const content = (
+        <>
+            {provider.icon && (
+                <provider.icon className={cn("size-4 shrink-0", classNames?.icon)} />
+            )}
+
+            <div className="min-w-0 flex-col">
+                <div className="text-sm">{provider.name}</div>
+                {email}
+            </div>
+        </>
+    )
+
+    if (isMobile && emailText) {
+        return (
+            <Tooltip open={tooltipOpen} onOpenChange={setTooltipOpen}>
+                <TooltipTrigger asChild>
+                    <button
+                        type="button"
+                        className="flex min-w-0 flex-1 cursor-pointer items-center gap-3 border-0 bg-transparent p-0 text-left"
+                        onClick={() => setTooltipOpen(!tooltipOpen)}
+                    >
+                        {content}
+                    </button>
+                </TooltipTrigger>
+                <TooltipContent>
+                    {emailText}
+                </TooltipContent>
+            </Tooltip>
+        )
+    }
+
+    return (
+        <div className="flex min-w-0 flex-1 items-center gap-3">
+            {content}
+        </div>
+    )
+}
+
+function useAccountEmail(account?: Account | null): string | null {
+    const {
+        hooks: { useAccountInfo }
+    } = useContext(AuthUIContext)
+
+    if (!account) return null
+
+    const { data: accountInfo } = useAccountInfo({
+        query: { accountId: account.accountId }
+    })
+
+    return accountInfo?.user.email || null
 }
 
 function AccountInfo({ account }: { account: { accountId: string } }) {
@@ -153,9 +221,13 @@ function AccountInfo({ account }: { account: { accountId: string } }) {
 
     if (!accountInfo) return null
 
+    const email = accountInfo?.user.email
+    if (!email) return null
+
     return (
-        <div className="text-muted-foreground text-xs">
-            {accountInfo?.user.email}
+        <div className="truncate text-muted-foreground text-xs">
+            {email}
         </div>
     )
 }
+
