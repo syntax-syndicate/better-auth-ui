@@ -236,7 +236,7 @@ export function UpdateFieldCard({
                                                     onValueChange={
                                                         field.onChange
                                                     }
-                                                    defaultValue={
+                                                    value={
                                                         field.value as string
                                                     }
                                                     disabled={isSubmitting}
