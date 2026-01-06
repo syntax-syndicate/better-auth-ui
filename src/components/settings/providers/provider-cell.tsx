@@ -10,7 +10,7 @@ import { cn, getLocalizedError } from "../../../lib/utils"
 import type { AuthLocalization } from "../../../localization/auth-localization"
 import type { Refetch } from "../../../types/refetch"
 import type { AuthHooks } from "../../../types/auth-hooks"
-import { useIsMobile } from "../../../hooks/use-mobile"
+
 import { Button } from "../../ui/button"
 import { Card } from "../../ui/card"
 import { Skeleton } from "../../ui/skeleton"
@@ -51,7 +51,7 @@ export function ProviderCell({
     localization = { ...contextLocalization, ...localization }
 
     const [isLoading, setIsLoading] = useState(false)
-    const isMobile = useIsMobile()
+
 
     const handleLink = async () => {
         setIsLoading(true)
@@ -117,9 +117,8 @@ export function ProviderCell({
                 classNames?.cell
             )}
         >
-            <CardContentWithTooltip
+            <ProviderCellContent
                 account={account}
-                isMobile={isMobile}
                 provider={provider}
                 classNames={classNames}
             />
@@ -139,55 +138,82 @@ export function ProviderCell({
     )
 }
 
-function CardContentWithTooltip({
+function ProviderCellContent({
     account,
-    isMobile,
-    provider,
-    classNames
+    classNames,
+    provider
 }: {
     account?: Account | null
-    isMobile: boolean
-    provider: Provider
     classNames?: SettingsCardClassNames
+    provider: Provider
+}) {
+    if (account) {
+        return (
+            <ConnectedProviderContent
+                account={account}
+                classNames={classNames}
+                provider={provider}
+            />
+        )
+    }
+
+    return (
+        <div className="flex min-w-0 flex-1 items-center gap-3">
+            <ProviderContent
+                classNames={classNames}
+                provider={provider}
+            />
+        </div>
+    )
+}
+
+function ConnectedProviderContent({
+    account,
+    classNames,
+    provider
+}: {
+    account: Account
+    classNames?: SettingsCardClassNames
+    provider: Provider
 }) {
     const {
         hooks: { useAccountInfo }
     } = useContext(AuthUIContext)
 
-    const accountInfoData = account
-        ? useAccountInfo({
-              query: { accountId: account.accountId }
-          })
-        : null
+    const { data: accountInfo, isPending } = useAccountInfo({
+        query: { accountId: account.accountId }
+    })
 
-    const email = account ? (
-        <AccountInfo account={account} accountInfo={accountInfoData} />
-    ) : null
-    const emailText = accountInfoData?.data?.user.email || null
+    const email = accountInfo?.user.email
 
     const content = (
-        <>
-            {provider.icon && (
-                <provider.icon className={cn("size-4 shrink-0", classNames?.icon)} />
-            )}
-
-            <div className="min-w-0 flex-col">
-                <div className="text-sm">{provider.name}</div>
-                {email}
-            </div>
-        </>
+        <ProviderContent
+            accountInfo={
+                isPending ? (
+                     <Skeleton className="my-0.5 h-3 w-28" />
+                ) : (
+                     <span className="truncate text-muted-foreground text-xs">{email}</span>
+                )
+            }
+            classNames={classNames}
+            provider={provider}
+        />
     )
 
-    if (isMobile && emailText) {
-        return (
+    if (email) {
+         return (
             <Tooltip>
                 <TooltipTrigger asChild>
-                    <div className="flex min-w-0 flex-1 items-center gap-3">
+                    <div
+                        className="flex min-w-0 flex-1 items-center gap-3 cursor-default"
+                        tabIndex={0}
+                        role="button"
+                    >
                         {content}
                     </div>
                 </TooltipTrigger>
                 <TooltipContent>
-                    {emailText}
+                    <p>{email}</p>
                 </TooltipContent>
             </Tooltip>
         )
@@ -200,36 +226,26 @@ function CardContentWithTooltip({
     )
 }
 
-function AccountInfo({
-    account,
-    accountInfo: accountInfoProp
+function ProviderContent({
+    accountInfo,
+    classNames,
+    provider
 }: {
-    account: { accountId: string }
-    accountInfo?: ReturnType<AuthHooks["useAccountInfo"]> | null
+    accountInfo?: React.ReactNode
+    classNames?: SettingsCardClassNames
+    provider: Provider
 }) {
-    const {
-        hooks: { useAccountInfo }
-    } = useContext(AuthUIContext)
-
-    const accountInfoData = accountInfoProp ?? useAccountInfo({
-        query: { accountId: account.accountId }
-    })
-
-    const { data: accountInfo, isPending } = accountInfoData
-
-    if (isPending) {
-        return <Skeleton className="my-0.5 h-3 w-28" />
-    }
-
-    if (!accountInfo) return null
-
-    const email = accountInfo?.user.email
-    if (!email) return null
-
     return (
-        <div className="truncate text-muted-foreground text-xs">
-            {email}
-        </div>
+        <>
+            {provider.icon && (
+                <provider.icon className={cn("size-4 shrink-0", classNames?.icon)} />
+            )}
+
+            <div className="min-w-0 flex-col">
+                <div className="text-sm">{provider.name}</div>
+                {accountInfo}
+            </div>
+        </>
     )
 }
 
