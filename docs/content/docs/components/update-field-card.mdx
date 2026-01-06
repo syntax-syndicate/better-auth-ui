@@ -27,7 +27,7 @@ import { UpdateFieldCard } from "./update-field-card";
 |----------------|--------------------------------------------------|-------------|--------------------------------------------|
 | `name`         | `string`                                         | (required)  | Field name in the user object              |
 | `label`        | `ReactNode`                                      | `undefined` | Display label for the field                |
-| `type`         | `"text" \| "number" \| "boolean" \| "select"`    | `"text"`    | Input type for the field                   |
+| `type`         | `"string" \| "number" \| "boolean" \| "select"`  | `"text"`    | Input type for the field                   |
 | `value`        | `unknown`                                        | `undefined` | Current field value                        |
 | `placeholder`  | `string`                                         | `undefined` | Input placeholder text                     |
 | `required`     | `boolean`                                        | `false`     | Whether the field is required              |
@@ -41,13 +41,13 @@ import { UpdateFieldCard } from "./update-field-card";
 
 ## Examples
 
-### Text Field
+### String Field
 
 ```tsx
 <UpdateFieldCard
     name="bio"
     label="Bio"
-    type="text"
+    type="string"
     placeholder="Tell us about yourself"
     description="A short description about you"
 />
