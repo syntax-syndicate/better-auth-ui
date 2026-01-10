@@ -4,12 +4,12 @@ import type { Account } from "better-auth"
 import type { SocialProvider } from "better-auth/social-providers"
 import { Loader2 } from "lucide-react"
 import { useContext, useState } from "react"
+import { useIsOverflow } from "../../../hooks/use-is-overflow"
 import { AuthUIContext } from "../../../lib/auth-ui-provider"
 import type { Provider } from "../../../lib/social-providers"
 import { cn, getLocalizedError } from "../../../lib/utils"
 import type { AuthLocalization } from "../../../localization/auth-localization"
 import type { Refetch } from "../../../types/refetch"
-import type { AuthHooks } from "../../../types/auth-hooks"
 
 import { Button } from "../../ui/button"
 import { Card } from "../../ui/card"
@@ -185,28 +185,34 @@ function ConnectedProviderContent({
     })
 
     const email = accountInfo?.user.email
+    const { ref: emailRef, isOverflow } = useIsOverflow<HTMLSpanElement>()
+
+    const emailElement = isPending ? (
+        <Skeleton className="my-0.5 h-3 w-28" />
+    ) : email ? (
+        <span
+            ref={emailRef}
+            className="truncate text-muted-foreground text-xs"
+        >
+            {email}
+        </span>
+    ) : null
 
     const content = (
         <ProviderContent
-            accountInfo={
-                isPending ? (
-                     <Skeleton className="my-0.5 h-3 w-28" />
-                ) : (
-                     <span className="truncate text-muted-foreground text-xs">{email}</span>
-                )
-            }
+            accountInfo={emailElement}
             classNames={classNames}
             provider={provider}
         />
     )
 
-    if (email) {
-         return (
+    const wrapperClassName = "flex min-w-0 flex-1 items-center gap-3"
+
+    if (email && isOverflow) {
+        return (
             <Tooltip>
                 <TooltipTrigger asChild>
-                    <div
-                        className="flex min-w-0 flex-1 cursor-default items-center gap-3"
-                    >
+                    <div className={cn(wrapperClassName, "cursor-default")}>
                         {content}
                     </div>
                 </TooltipTrigger>
@@ -218,7 +224,7 @@ function ConnectedProviderContent({
     }
 
     return (
-        <div className="flex min-w-0 flex-1 items-center gap-3">
+        <div className={wrapperClassName}>
             {content}
         </div>
     )
